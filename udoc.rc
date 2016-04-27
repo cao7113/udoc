@@ -1,0 +1,39 @@
+export unote_home=/u/dev/unote
+
+function _unote_comp(){
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  opts=$(cd $unote_home && git ls-files )
+
+  COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+  return 0
+}
+
+function md(){
+  cd /l/udoc >/dev/null && thor udoc_cli:note $* && cd -
+}
+complete -F _unote_comp md
+
+alias todo="md todo"
+alias idea="md idea"
+alias plan="md plan"
+
+alias doc='md'
+
+function docag(){
+  cd $unote_home >/dev/null && ag $* && cd -
+}
+
+function docfind(){
+  cd $unote_home >/dev/null && git ls-files |grep $* && cd - >/dev/null
+}
+
+function udoc(){
+  action=$1
+  shift
+  cd /l/udoc
+  thor udoc_cli:$action $*
+} 
